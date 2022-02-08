@@ -25,17 +25,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryResponse> getAll() {
-        var entities = repository.findAll();
-        var responses = entities.stream().map(entity -> mapper.map(entity, CategoryResponse.class))
+        var categories = repository.findAll();
+        var responses = categories.stream().map(entity -> mapper.map(entity, CategoryResponse.class))
                 .collect(Collectors.toList());
         return responses;
     }
 
     @Override
     public CategoryResponse getById(Long id) {
-        var entity = repository.getCategoryById(id)
+        var category = repository.getCategoryById(id)
                 .orElseThrow(() -> new ResourceNotFoundExceptionRequest("Category not found"));
-        var response = mapper.map(entity, CategoryResponse.class);
+        var response = mapper.map(category, CategoryResponse.class);
         return response;
     }
 

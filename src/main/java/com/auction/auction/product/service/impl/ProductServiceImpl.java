@@ -29,15 +29,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductResponse> getAll() {
-        try {
-            var products = productRepository.findAll();
-            var responses = products.stream().map(product -> mapper.map(
-                    product, ProductResponse.class))
-                    .collect(Collectors.toList());
-            return responses;
-        } catch (Exception e) {
-            throw new ResourceNotFoundExceptionRequest("Error ocurred while getting all product");
-        }
+        var products = productRepository.findAll();
+        var responses = products.stream().map(product -> mapper.map(
+                product, ProductResponse.class))
+                .collect(Collectors.toList());
+        return responses;
     }
 
     @Override
@@ -50,7 +46,6 @@ public class ProductServiceImpl implements ProductService {
         } catch (Exception e) {
             throw new ResourceNotFoundExceptionRequest("Error ocurred while getting product");
         }
-
     }
 
     @Override

@@ -30,20 +30,20 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<List<CategoryResponse>> getAll() {
-        var response = service.getAll();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        var categories = service.getAll();
+        return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponse> getById(@Valid @PathVariable(name = "id") Long id) {
-        var response = service.getById(id);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        var category = service.getById(id);
+        return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<CategoryResponse> create(@Valid @RequestBody CategoryRequest request) {
-        var response = service.create(request);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        var category = service.create(request);
+        return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -55,7 +55,7 @@ public class CategoryController {
     @PutMapping("/{id}")
     public ResponseEntity<CategoryResponse> update(@Valid @PathVariable(name = "id") Long id,
             @Valid @RequestBody CategoryRequest request) {
-        var response = service.updateById(id, request);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        var category = service.updateById(id, request);
+        return new ResponseEntity<>(category, HttpStatus.OK);
     }
 }
