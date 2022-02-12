@@ -70,7 +70,7 @@ public class EmployeeController {
         return new ResponseEntity<>(exist, HttpStatus.OK);
     }
 
-    @GetMapping("/email")
+    @GetMapping("/dni")
     private ResponseEntity<Boolean> getByDni(@Valid @RequestBody EmployeeRequest request) {
         var exist = employeeService.getByDni(request.getDni());
         return new ResponseEntity<>(exist, HttpStatus.OK);
