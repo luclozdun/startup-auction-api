@@ -53,5 +53,5 @@ public class Customer {
     private Long bonus;
 
     @Column(name = "wallet")
-    private Long wallet;
+    private Double wallet;
 }
