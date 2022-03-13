@@ -99,7 +99,7 @@ public class AuctionServiceImpl implements AuctionService {
             var response = mapper.map(auction, AuctionResponse.class);
             return response;
         } catch (Exception e) {
-            throw new ResourceNotFoundExceptionRequest("Error ocurred while creating auction");
+            throw new ResourceNotFoundExceptionRequest("Error ocurred while updating auction");
         }
     }
 
@@ -108,7 +108,7 @@ public class AuctionServiceImpl implements AuctionService {
         try {
             auctionRepository.deleteById(id);
         } catch (Exception e) {
-            throw new ResourceNotFoundExceptionRequest("Error ocurred while creating auction");
+            throw new ResourceNotFoundExceptionRequest("Error ocurred while deleting auction");
         }
     }
 }
