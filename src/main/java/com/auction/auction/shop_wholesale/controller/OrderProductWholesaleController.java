@@ -39,7 +39,7 @@ public class OrderProductWholesaleController {
         return new ResponseEntity<>(orderProductWholesales, HttpStatus.OK);
     }
 
-    @DeleteMapping("/order/{id}")
+    @DeleteMapping("/{id}")
     private ResponseEntity<?> deleteByOrderId(@Valid @PathVariable(name = "id") Long id) {
         orderProductWholesaleService.deleteByOrderId(id);
         return new ResponseEntity<>(HttpStatus.OK);

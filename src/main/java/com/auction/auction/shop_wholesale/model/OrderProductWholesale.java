@@ -1,5 +1,6 @@
 package com.auction.auction.shop_wholesale.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -27,12 +28,12 @@ public class OrderProductWholesale {
     @Column(name = "quantify")
     private Long quantify;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @MapsId("orderWholesaleId")
     @JoinColumn(name = "order_wholesale_id")
     private OrderWholesale orderWholesale;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @MapsId("productWholesaleId")
     @JoinColumn(name = "product_wholesale_id")
     private ProductWholesale productWholesale;
