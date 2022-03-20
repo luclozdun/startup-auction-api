@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EmployeeRespository extends JpaRepository<Employee, Long> {
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Optional<Employee> getEmployeeById(Long id);
 
     Optional<Employee> getEmployeeByUsernameAndPassword(String username, String password);

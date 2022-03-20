@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import com.auction.auction.exception.ResourceNotFoundExceptionRequest;
 import com.auction.auction.security.dto.EmployeeRequest;
 import com.auction.auction.security.dto.EmployeeResponse;
-import com.auction.auction.security.repository.EmployeeRespository;
+import com.auction.auction.security.repository.EmployeeRepository;
 import com.auction.auction.security.service.EmployeeService;
 
 import org.modelmapper.ModelMapper;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
-    private EmployeeRespository employeeRespository;
+    private EmployeeRepository employeeRespository;
 
     @Autowired
     private ModelMapper mapper;

@@ -8,7 +8,7 @@ import com.auction.auction.security.dto.EmployeeResponse;
 import com.auction.auction.security.model.Customer;
 import com.auction.auction.security.model.Employee;
 import com.auction.auction.security.repository.CustomerRepository;
-import com.auction.auction.security.repository.EmployeeRespository;
+import com.auction.auction.security.repository.EmployeeRepository;
 import com.auction.auction.security.service.RegisterService;
 
 import org.modelmapper.ModelMapper;
@@ -17,13 +17,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RegisterImpl implements RegisterService {
+public class RegisterServiceImpl implements RegisterService {
 
     @Autowired
     private CustomerRepository customerRepository;
 
     @Autowired
-    private EmployeeRespository employeeRespository;
+    private EmployeeRepository employeeRespository;
 
     @Autowired
     private BCryptPasswordEncoder encoder;
