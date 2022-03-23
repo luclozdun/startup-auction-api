@@ -20,6 +20,7 @@ public class AuctionResponse {
     private String video;
     private CategoryResponse category;
     private Double price;
+    private Double priceBase;
     private CustomerResponse customer;
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date lastDate;

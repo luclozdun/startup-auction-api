@@ -1,4 +1,4 @@
-package com.auction.auction.security.Controller;
+package com.auction.auction.security.controller;
 
 import java.util.List;
 
