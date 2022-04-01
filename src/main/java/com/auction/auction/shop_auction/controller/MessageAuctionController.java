@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import com.auction.auction.shop_auction.dto.AuctionResponse;
 import com.auction.auction.shop_auction.dto.MessageAuctionRequest;
 import com.auction.auction.shop_auction.dto.MessageAuctionResponse;
 import com.auction.auction.shop_auction.service.MessageAuctionService;
@@ -47,7 +46,7 @@ public class MessageAuctionController {
     }
 
     @PostMapping
-    private ResponseEntity<AuctionResponse> create(@Valid @RequestBody MessageAuctionRequest request) {
+    private ResponseEntity<MessageAuctionResponse> create(@Valid @RequestBody MessageAuctionRequest request) {
         var message = messageAuctionService.create(request);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }

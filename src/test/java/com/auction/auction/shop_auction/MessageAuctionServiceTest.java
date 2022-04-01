@@ -16,7 +16,6 @@ import com.auction.auction.security.dto.CustomerResponse;
 import com.auction.auction.security.model.Customer;
 import com.auction.auction.security.repository.CustomerRepository;
 import com.auction.auction.security.service.impl.CustomerServiceImpl;
-import com.auction.auction.shop_auction.dto.AuctionResponse;
 import com.auction.auction.shop_auction.dto.MessageAuctionRequest;
 import com.auction.auction.shop_auction.dto.MessageAuctionResponse;
 import com.auction.auction.shop_auction.model.Auction;
@@ -197,7 +196,7 @@ public class MessageAuctionServiceTest {
         when(messageAuctionRepository.save(Mockito.any())).thenReturn(messageAuction);
         when(auctionRepository.save(Mockito.any())).thenReturn(auction);
         // Act
-        AuctionResponse response = messageAuctionServiceImpl.create(request);
+        MessageAuctionResponse response = messageAuctionServiceImpl.create(request);
         CustomerResponse customerResponse = customerServiceImpl.getById(1L);
 
         // Assert
@@ -407,7 +406,7 @@ public class MessageAuctionServiceTest {
         when(messageAuctionRepository.save(Mockito.any())).thenReturn(messageAuction);
         when(auctionRepository.save(Mockito.any())).thenReturn(auction);
         // Act
-        AuctionResponse response = messageAuctionServiceImpl.create(request);
+        MessageAuctionResponse response = messageAuctionServiceImpl.create(request);
         CustomerResponse customer1Response = customerServiceImpl.getById(1L);
         CustomerResponse customer2Response = customerServiceImpl.getById(2L);
 

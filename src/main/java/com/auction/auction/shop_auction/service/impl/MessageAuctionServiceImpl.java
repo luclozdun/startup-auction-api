@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import com.auction.auction.exception.ResourceNotFoundExceptionRequest;
 import com.auction.auction.security.model.Customer;
 import com.auction.auction.security.repository.CustomerRepository;
-import com.auction.auction.shop_auction.dto.AuctionResponse;
 import com.auction.auction.shop_auction.dto.MessageAuctionRequest;
 import com.auction.auction.shop_auction.dto.MessageAuctionResponse;
 import com.auction.auction.shop_auction.model.MessageAuction;
@@ -18,8 +17,10 @@ import com.auction.auction.shop_auction.service.MessageAuctionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class MessageAuctionServiceImpl implements MessageAuctionService {
 
     @Autowired
@@ -59,7 +60,7 @@ public class MessageAuctionServiceImpl implements MessageAuctionService {
     }
 
     @Override
-    public AuctionResponse create(MessageAuctionRequest request) {
+    public MessageAuctionResponse create(MessageAuctionRequest request) {
 
         var auction = auctionRepository.getAuctionById(request.getAuctionId())
                 .orElseThrow(() -> new ResourceNotFoundExceptionRequest("Auction not found"));
@@ -118,13 +119,13 @@ public class MessageAuctionServiceImpl implements MessageAuctionService {
 
         try {
             auctionRepository.save(auction);
-            var response = mapper.map(auction, AuctionResponse.class);
-            return response;
 
         } catch (Exception e) {
             throw new ResourceNotFoundExceptionRequest("Error ocurrred while updating auction price");
         }
 
+        var response = mapper.map(message, MessageAuctionResponse.class);
+        return response;
     }
 
     @Override
