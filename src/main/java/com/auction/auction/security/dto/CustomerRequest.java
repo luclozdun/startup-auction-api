@@ -3,6 +3,7 @@ package com.auction.auction.security.dto;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 import lombok.Data;
 
@@ -15,6 +16,6 @@ public class CustomerRequest {
     private String lastname;
     private String dni;
     private String number;
-    @JsonFormat(pattern = "yy/MM/dd")
+    @JsonFormat(pattern = "yyyy/MM/dd", shape = Shape.STRING)
     private Date brithday;
 }

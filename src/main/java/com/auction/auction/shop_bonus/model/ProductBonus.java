@@ -13,6 +13,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.auction.auction.product.model.Product;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class ProductBonus {
     private Long id;
 
     @Column(name = "start_date")
+    @JsonFormat(pattern = "dd/MM/yyyy hh:ss")
     private Date startDate;
 
     @Column(name = "price")

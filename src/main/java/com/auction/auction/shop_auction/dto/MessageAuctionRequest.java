@@ -6,5 +6,5 @@ import lombok.Data;
 public class MessageAuctionRequest {
     private Long customerId;
     private Long auctionId;
-    private Double price;
+    private Long price;
 }

@@ -7,11 +7,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import com.auction.auction.exception.ResourceNotFoundExceptionRequest;
-import com.auction.auction.product.model.Category;
 import com.auction.auction.security.dto.CustomerResponse;
 import com.auction.auction.security.model.Customer;
 import com.auction.auction.security.repository.CustomerRepository;
@@ -19,6 +19,7 @@ import com.auction.auction.security.service.impl.CustomerServiceImpl;
 import com.auction.auction.shop_auction.dto.MessageAuctionRequest;
 import com.auction.auction.shop_auction.dto.MessageAuctionResponse;
 import com.auction.auction.shop_auction.model.Auction;
+import com.auction.auction.shop_auction.model.AuctionProduct;
 import com.auction.auction.shop_auction.model.MessageAuction;
 import com.auction.auction.shop_auction.repository.AuctionRepository;
 import com.auction.auction.shop_auction.repository.MessageAuctionRepository;
@@ -68,44 +69,34 @@ public class MessageAuctionServiceTest {
         MockitoAnnotations.openMocks(this);
 
         auction = new Auction();
-        auction.setAvaible(true);
-        auction.setCaracteristic("It's a black computer");
-        auction.setCategory(new Category());
-        auction.setId(1L);
-        auction.setImage1("Image 1");
-        auction.setImage2("Image 2");
-        auction.setImage3("Image 3");
-        auction.setPriceBase(1550.00);
-        auction.setName("Computer");
-        auction.setPrice(150.00);
+        auction.setActive(true);
+        auction.setAuctionProduct(new AuctionProduct());
+        auction.setCreatedAt(new Date());
         auction.setCustomer(null);
-        auction.setVideo("Video");
+        auction.setFinishedAt(new Date());
+        auction.setPrice(10L);
+        auction.setId(1L);
 
         customer = new Customer();
         customer.setId(1L);
         customer.setEmail("email@hotmail");
         customer.setDni("78945612");
-        customer.setWallet(1000.0);
+        customer.setWallet(1000L);
 
         messageAuction = new MessageAuction();
         messageAuction.setAuction(auction);
         messageAuction.setCustomer(customer);
         messageAuction.setId(1L);
-        messageAuction.setPrice(150.0);
+        messageAuction.setPrice(150L);
 
         auction2Customer = new Auction();
-        auction2Customer.setAvaible(true);
-        auction2Customer.setCaracteristic("It's a black computer");
-        auction2Customer.setCategory(new Category());
-        auction2Customer.setId(1L);
-        auction2Customer.setImage1("Image 1");
-        auction2Customer.setImage2("Image 2");
-        auction2Customer.setImage3("Image 3");
-        auction2Customer.setPriceBase(150.00);
-        auction2Customer.setName("Computer");
-        auction2Customer.setPrice(150.00);
-        auction2Customer.setCustomer(customer);
-        auction2Customer.setVideo("Video");
+        auction2Customer.setActive(true);
+        auction2Customer.setAuctionProduct(new AuctionProduct());
+        auction2Customer.setCreatedAt(new Date());
+        auction2Customer.setCustomer(null);
+        auction2Customer.setFinishedAt(new Date());
+        auction2Customer.setPrice(10L);
+        auction2Customer.setId(2L);
     }
 
     @Test
@@ -116,7 +107,7 @@ public class MessageAuctionServiceTest {
         newMessage.setAuction(auction);
         newMessage.setCustomer(customer);
         newMessage.setId(2L);
-        newMessage.setPrice(160.0);
+        newMessage.setPrice(160L);
 
         ArrayList<MessageAuction> messages = new ArrayList<MessageAuction>();
         messages.add(newMessage);
@@ -139,7 +130,7 @@ public class MessageAuctionServiceTest {
         newMessage.setAuction(auction);
         newMessage.setCustomer(customer);
         newMessage.setId(2L);
-        newMessage.setPrice(160.0);
+        newMessage.setPrice(160L);
 
         ArrayList<MessageAuction> messages = new ArrayList<MessageAuction>();
         messages.add(newMessage);
@@ -163,7 +154,7 @@ public class MessageAuctionServiceTest {
         MessageAuctionResponse response = messageAuctionServiceImpl.getById(1L);
         // Assert
         assertEquals(1L, response.getId());
-        assertEquals(150.0, response.getPrice());
+        assertEquals(150L, response.getPrice());
     }
 
     @Test
@@ -187,7 +178,7 @@ public class MessageAuctionServiceTest {
         MessageAuctionRequest request = new MessageAuctionRequest();
         request.setAuctionId(1L);
         request.setCustomerId(1L);
-        request.setPrice(200.0);
+        request.setPrice(200L);
 
         when(auctionRepository.getAuctionById(1L)).thenReturn(Optional.of(auction));
         when(customerRepository.getCustomerById(1L)).thenReturn(Optional.of(customer));
@@ -211,7 +202,7 @@ public class MessageAuctionServiceTest {
         MessageAuctionRequest request = new MessageAuctionRequest();
         request.setAuctionId(1L);
         request.setCustomerId(1L);
-        request.setPrice(10.0);
+        request.setPrice(10L);
 
         when(auctionRepository.getAuctionById(1L)).thenReturn(Optional.of(auction));
         when(customerRepository.getCustomerById(1L)).thenReturn(Optional.of(customer));
@@ -233,11 +224,11 @@ public class MessageAuctionServiceTest {
     @DisplayName("When Create Message But Insufficient Balance")
     void WhenCreateMessageButInsufficientBalance() {
         // Arrange
-        customer.setWallet(100.0);
+        customer.setWallet(100L);
         MessageAuctionRequest request = new MessageAuctionRequest();
         request.setAuctionId(1L);
         request.setCustomerId(1L);
-        request.setPrice(800.0);
+        request.setPrice(800L);
 
         when(auctionRepository.getAuctionById(1L)).thenReturn(Optional.of(auction));
         when(customerRepository.getCustomerById(1L)).thenReturn(Optional.of(customer));
@@ -262,7 +253,7 @@ public class MessageAuctionServiceTest {
         MessageAuctionRequest request = new MessageAuctionRequest();
         request.setAuctionId(1L);
         request.setCustomerId(1L);
-        request.setPrice(200.0);
+        request.setPrice(200L);
 
         when(auctionRepository.getAuctionById(1L)).thenReturn(Optional.of(auction));
         when(customerRepository.getCustomerById(1L)).thenReturn(Optional.empty());
@@ -287,7 +278,7 @@ public class MessageAuctionServiceTest {
         MessageAuctionRequest request = new MessageAuctionRequest();
         request.setAuctionId(1L);
         request.setCustomerId(1L);
-        request.setPrice(200.0);
+        request.setPrice(200L);
 
         when(auctionRepository.getAuctionById(1L)).thenReturn(Optional.empty());
         when(customerRepository.getCustomerById(1L)).thenReturn(Optional.of(customer));
@@ -312,7 +303,7 @@ public class MessageAuctionServiceTest {
         MessageAuctionRequest request = new MessageAuctionRequest();
         request.setAuctionId(1L);
         request.setCustomerId(1L);
-        request.setPrice(200.0);
+        request.setPrice(200L);
 
         when(auctionRepository.getAuctionById(1L)).thenReturn(Optional.of(auction));
         when(customerRepository.getCustomerById(1L)).thenReturn(Optional.of(customer));
@@ -337,7 +328,7 @@ public class MessageAuctionServiceTest {
         MessageAuctionRequest request = new MessageAuctionRequest();
         request.setAuctionId(1L);
         request.setCustomerId(1L);
-        request.setPrice(200.0);
+        request.setPrice(200L);
 
         when(auctionRepository.getAuctionById(1L)).thenReturn(Optional.of(auction));
         when(customerRepository.getCustomerById(1L)).thenReturn(Optional.of(customer));
@@ -362,7 +353,7 @@ public class MessageAuctionServiceTest {
         MessageAuctionRequest request = new MessageAuctionRequest();
         request.setAuctionId(1L);
         request.setCustomerId(1L);
-        request.setPrice(200.0);
+        request.setPrice(200L);
 
         when(auctionRepository.getAuctionById(1L)).thenReturn(Optional.of(auction));
         when(customerRepository.getCustomerById(1L)).thenReturn(Optional.of(customer));
@@ -387,13 +378,13 @@ public class MessageAuctionServiceTest {
         MessageAuctionRequest request = new MessageAuctionRequest();
         request.setAuctionId(1L);
         request.setCustomerId(2L);
-        request.setPrice(200.0);
+        request.setPrice(200L);
 
         Customer customer2 = new Customer();
         customer2.setId(2L);
         customer2.setEmail("email2@hotmail");
         customer2.setDni("789456122");
-        customer2.setWallet(1000.0);
+        customer2.setWallet(1000L);
 
         ArrayList<Customer> customers = new ArrayList<Customer>();
         customers.add(customer);
@@ -423,13 +414,13 @@ public class MessageAuctionServiceTest {
         MessageAuctionRequest request = new MessageAuctionRequest();
         request.setAuctionId(1L);
         request.setCustomerId(2L);
-        request.setPrice(200.0);
+        request.setPrice(200L);
 
         Customer customer2 = new Customer();
         customer2.setId(2L);
         customer2.setEmail("email2@hotmail");
         customer2.setDni("789456122");
-        customer2.setWallet(1000.0);
+        customer2.setWallet(1000L);
 
         ArrayList<Customer> customers = new ArrayList<Customer>();
         customers.add(customer);

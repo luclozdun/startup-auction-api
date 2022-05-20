@@ -1,19 +1,22 @@
 package com.auction.auction.shop_auction.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.auction.auction.exception.ResourceNotFoundExceptionRequest;
-import com.auction.auction.product.repository.CategoryRepository;
 import com.auction.auction.shop_auction.dto.AuctionRequest;
 import com.auction.auction.shop_auction.dto.AuctionResponse;
 import com.auction.auction.shop_auction.model.Auction;
+import com.auction.auction.shop_auction.repository.AuctionProductRepository;
 import com.auction.auction.shop_auction.repository.AuctionRepository;
+import com.auction.auction.shop_auction.repository.MessageAuctionRepository;
 import com.auction.auction.shop_auction.service.AuctionService;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuctionServiceImpl implements AuctionService {
@@ -22,7 +25,10 @@ public class AuctionServiceImpl implements AuctionService {
     private AuctionRepository auctionRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private AuctionProductRepository auctionProductRepository;
+
+    @Autowired
+    private MessageAuctionRepository messageAuctionRepository;
 
     @Autowired
     private ModelMapper mapper;
@@ -44,28 +50,34 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
+    @Transactional
     public AuctionResponse create(AuctionRequest request) {
-        var category = categoryRepository.getCategoryById(request.getCustomerId())
-                .orElseThrow(() -> new ResourceNotFoundExceptionRequest("Category not found"));
+        var auctionProduct = auctionProductRepository.getAuctionProductById(request.getAuctionProductId())
+                .orElseThrow(() -> new ResourceNotFoundExceptionRequest("Auction product not found"));
 
-        var auction = new Auction();
-        auction.setAvaible(true);
-        auction.setCaracteristic(request.getCaracteristic());
-        auction.setCategory(category);
-        auction.setCreateDate(request.getCreateDate());
-        auction.setCustomer(null);
-        auction.setImage1(request.getImage1());
-        auction.setImage2(request.getImage2());
-        auction.setImage3(request.getImage3());
-        auction.setLastDate(request.getLastDate());
-        auction.setName(request.getName());
-        auction.setPrice(request.getPrice());
-        auction.setVideo(request.getVideo());
-        auction.setPriceBase(request.getPrice());
+        var stock = auctionProduct.getStock() - 1;
+
+        if (stock < 0) {
+            throw new ResourceNotFoundExceptionRequest("Auction product not stock");
+        }
+        auctionProduct.setStock(stock);
+
+        var entity = new Auction();
+        entity.setActive(true);
+        entity.setAuctionProduct(auctionProduct);
+        entity.setCreatedAt(request.getCreatedAt());
+        entity.setFinishedAt(request.getFinishedAt());
+        entity.setPrice(auctionProduct.getPrice());
 
         try {
-            auctionRepository.save(auction);
-            var response = mapper.map(auction, AuctionResponse.class);
+            auctionProductRepository.save(auctionProduct);
+        } catch (Exception e) {
+            throw new ResourceNotFoundExceptionRequest("Error ocurred while creating auction");
+        }
+
+        try {
+            auctionRepository.save(entity);
+            var response = mapper.map(entity, AuctionResponse.class);
             return response;
         } catch (Exception e) {
             throw new ResourceNotFoundExceptionRequest("Error ocurred while creating auction");
@@ -74,29 +86,20 @@ public class AuctionServiceImpl implements AuctionService {
 
     @Override
     public AuctionResponse update(AuctionRequest request, Long id) {
-        var category = categoryRepository.getCategoryById(request.getCustomerId())
-                .orElseThrow(() -> new ResourceNotFoundExceptionRequest("Category not found"));
-
-        var auction = auctionRepository.getAuctionById(id)
+        var entity = auctionRepository.getAuctionById(id)
                 .orElseThrow(() -> new ResourceNotFoundExceptionRequest("Auction not found"));
 
-        auction.setAvaible(true);
-        auction.setCaracteristic(request.getCaracteristic());
-        auction.setCategory(category);
-        auction.setCreateDate(request.getCreateDate());
-        auction.setCustomer(null);
-        auction.setImage1(request.getImage1());
-        auction.setImage2(request.getImage2());
-        auction.setImage3(request.getImage3());
-        auction.setLastDate(request.getLastDate());
-        auction.setName(request.getName());
-        auction.setPrice(request.getPrice());
-        auction.setVideo(request.getVideo());
-        auction.setPriceBase(request.getPrice());
+        var auctionProduct = auctionProductRepository.getAuctionProductById(request.getAuctionProductId())
+                .orElseThrow(() -> new ResourceNotFoundExceptionRequest("Auction product not found"));
+
+        entity.setActive(true);
+        entity.setAuctionProduct(auctionProduct);
+        entity.setCreatedAt(new Date());
+        entity.setFinishedAt(request.getFinishedAt());
 
         try {
-            auctionRepository.save(auction);
-            var response = mapper.map(auction, AuctionResponse.class);
+            auctionRepository.save(entity);
+            var response = mapper.map(entity, AuctionResponse.class);
             return response;
         } catch (Exception e) {
             throw new ResourceNotFoundExceptionRequest("Error ocurred while updating auction");
@@ -104,11 +107,44 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
-        try {
-            auctionRepository.deleteById(id);
-        } catch (Exception e) {
-            throw new ResourceNotFoundExceptionRequest("Error ocurred while deleting auction");
+        var entity = auctionRepository.getAuctionById(id)
+                .orElseThrow(() -> new ResourceNotFoundExceptionRequest("Auction not found"));
+
+        if (entity.getCustomer() == null) {
+            var stock = entity.getAuctionProduct().getStock() + 1;
+            entity.getAuctionProduct().setStock(stock);
+
+            try {
+                auctionProductRepository.save(entity.getAuctionProduct());
+            } catch (Exception e) {
+                throw new ResourceNotFoundExceptionRequest("Error ocurred while updating auction product");
+            }
+
+            try {
+                messageAuctionRepository.deleteAllByAuctionId(id);
+            } catch (Exception e) {
+                throw new ResourceNotFoundExceptionRequest("Error ocurred while deleting messages auction");
+            }
+
+            try {
+                auctionRepository.deleteById(id);
+            } catch (Exception e) {
+                throw new ResourceNotFoundExceptionRequest("Error ocurred while deleting auction");
+            }
+        } else {
+            try {
+                messageAuctionRepository.deleteAllByAuctionId(id);
+            } catch (Exception e) {
+                throw new ResourceNotFoundExceptionRequest("Error ocurred while deleting messages auction");
+            }
+
+            try {
+                auctionRepository.deleteById(id);
+            } catch (Exception e) {
+                throw new ResourceNotFoundExceptionRequest("Error ocurred while deleting auction");
+            }
         }
     }
 }

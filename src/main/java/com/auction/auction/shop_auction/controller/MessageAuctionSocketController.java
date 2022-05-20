@@ -9,12 +9,15 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
+import springfox.documentation.annotations.ApiIgnore;
+
 @Controller
 public class MessageAuctionSocketController {
 
     @Autowired
     private MessageAuctionService messageAuctionService;
 
+    @ApiIgnore
     @MessageMapping("/message")
     @SendTo("/chat/message")
     public MessageAuctionResponse getAllWhenSendMessage(

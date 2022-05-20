@@ -57,7 +57,7 @@ public class CustomerServiceTest {
         customer.setName("name");
         customer.setPassword("password");
         customer.setUsername("username");
-        customer.setWallet(15.50);
+        customer.setWallet(15L);
     }
 
     @Test
@@ -74,7 +74,7 @@ public class CustomerServiceTest {
         customer2.setName("name");
         customer2.setPassword("password");
         customer2.setUsername("username");
-        customer2.setWallet(15.50);
+        customer2.setWallet(15L);
 
         ArrayList<Customer> customers = new ArrayList<Customer>();
         customers.add(customer);

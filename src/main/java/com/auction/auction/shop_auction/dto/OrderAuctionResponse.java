@@ -5,9 +5,9 @@ import com.auction.auction.security.dto.CustomerSimpleResponse;
 import lombok.Data;
 
 @Data
-public class MessageAuctionResponse {
+public class OrderAuctionResponse {
     private Long id;
-    private CustomerSimpleResponse customer;
     private AuctionResponse auction;
-    private Long price;
+    private CustomerSimpleResponse customer;
+    private Double price;
 }

@@ -50,7 +50,7 @@ public class RegisterServiceImpl implements RegisterService {
         var customer = mapper.map(request, Customer.class);
         var passwordEncrypt = encoder.encode(request.getPassword());
         customer.setBonus(0L);
-        customer.setWallet(0.0);
+        customer.setWallet(10000L);
         customer.setPassword(passwordEncrypt);
         try {
             customerRepository.save(customer);

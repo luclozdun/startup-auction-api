@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class OrderDetailBonusRequest {
     private Long customerId;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy hh:mm")
     private Date date;
     private List<OrderDetailBonusIdRequest> products;
 }

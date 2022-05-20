@@ -65,7 +65,7 @@ public class MessageAuctionServiceImpl implements MessageAuctionService {
         var auction = auctionRepository.getAuctionById(request.getAuctionId())
                 .orElseThrow(() -> new ResourceNotFoundExceptionRequest("Auction not found"));
 
-        if (auction.getPrice() > request.getPrice()) {
+        if (auction.getPrice() >= request.getPrice()) {
             throw new ResourceNotFoundExceptionRequest("Invalid balance");
         }
 
@@ -95,7 +95,6 @@ public class MessageAuctionServiceImpl implements MessageAuctionService {
             var customers = new ArrayList<Customer>();
             customers.add(previosCustomer);
             customers.add(customer);
-            System.out.print(price);
             try {
                 customerRepository.saveAll(customers);
             } catch (Exception e) {
@@ -136,8 +135,11 @@ public class MessageAuctionServiceImpl implements MessageAuctionService {
 
     @Override
     public void delete(Long id) {
-        // TODO Auto-generated method stub
-
+        try {
+            messageAuctionRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new ResourceNotFoundExceptionRequest("Error ocurrred while deleting auction price");
+        }
     }
 
 }

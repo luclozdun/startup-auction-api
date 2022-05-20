@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,11 +49,12 @@ public class Customer {
     private String number;
 
     @Column(name = "brithday")
+    @JsonFormat(pattern = "yyyy/MM/dd")
     private Date brithday;
 
     @Column(name = "bonus")
     private Long bonus;
 
     @Column(name = "wallet")
-    private Double wallet;
+    private Long wallet;
 }

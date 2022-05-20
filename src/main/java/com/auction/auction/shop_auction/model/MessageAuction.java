@@ -17,8 +17,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name = "message_auctions")
-@Table
+@Entity
+@Table(name = "message_auctions")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -37,5 +37,5 @@ public class MessageAuction {
     private Auction auction;
 
     @Column(name = "price")
-    private Double price;
+    private Long price;
 }

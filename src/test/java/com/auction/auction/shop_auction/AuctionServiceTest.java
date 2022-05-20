@@ -14,10 +14,12 @@ import java.util.Optional;
 
 import com.auction.auction.exception.ResourceNotFoundExceptionRequest;
 import com.auction.auction.product.model.Category;
-import com.auction.auction.product.repository.CategoryRepository;
+import com.auction.auction.security.model.Employee;
 import com.auction.auction.shop_auction.dto.AuctionRequest;
 import com.auction.auction.shop_auction.dto.AuctionResponse;
 import com.auction.auction.shop_auction.model.Auction;
+import com.auction.auction.shop_auction.model.AuctionProduct;
+import com.auction.auction.shop_auction.repository.AuctionProductRepository;
 import com.auction.auction.shop_auction.repository.AuctionRepository;
 import com.auction.auction.shop_auction.service.impl.AuctionServiceImpl;
 
@@ -32,7 +34,7 @@ import org.modelmapper.ModelMapper;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class ProductAuctionServiceTest {
+public class AuctionServiceTest {
 
     @Spy
     private ModelMapper mapper;
@@ -41,37 +43,43 @@ public class ProductAuctionServiceTest {
     private AuctionRepository auctionRepository;
 
     @Spy
-    private CategoryRepository categoryRepository;
+    private AuctionProductRepository auctionProductRepository;
 
     @InjectMocks
     private AuctionServiceImpl auctionServiceImpl;
 
     private Auction auction;
 
-    private Category category;
+    private AuctionProduct auctionProduct;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
         auction = new Auction();
-        auction.setAvaible(true);
-        auction.setCaracteristic("It's a black computer");
-        auction.setCategory(new Category());
-        auction.setId(1L);
-        auction.setImage1("Image 1");
-        auction.setImage2("Image 2");
-        auction.setImage3("Image 3");
-        auction.setPriceBase(1550.00);
-        auction.setName("Computer");
-        auction.setPrice(1550.00);
+        auction.setActive(true);
+        auction.setAuctionProduct(new AuctionProduct());
+        auction.setCreatedAt(new Date());
         auction.setCustomer(null);
-        auction.setVideo("Video");
+        auction.setFinishedAt(new Date());
+        auction.setPrice(1550L);
+        auction.setId(1L);
 
-        category = new Category();
-        category.setId(1L);
-        category.setDescription("Everything Tecnology like computer, movile, nintendo");
-        category.setName("Tecnology");
+        auctionProduct = new AuctionProduct();
+        auctionProduct.setCaracteristic("It's a black computer");
+        auctionProduct.setImage1("Image 1");
+        auctionProduct.setImage2("Image 2");
+        auctionProduct.setImage3("Image 3");
+        auctionProduct.setPrice(1550L);
+        auctionProduct.setName("Computer");
+        auctionProduct.setPrice(1550L);
+        auctionProduct.setVideo("Video");
+        auctionProduct.setEmployee(new Employee());
+        auctionProduct.setCategory(new Category());
+        auctionProduct.setCreatedAt(new Date());
+        auctionProduct.setId(1L);
+        auctionProduct.setStock(5L);
+        auctionProduct.setUpdatedAt(new Date());
     }
 
     @Test
@@ -80,18 +88,13 @@ public class ProductAuctionServiceTest {
         // Arrange
         Auction newAuction = new Auction();
         newAuction = new Auction();
-        newAuction.setAvaible(true);
-        newAuction.setCaracteristic("It's a black computer");
-        newAuction.setCategory(new Category());
-        newAuction.setId(2L);
-        newAuction.setImage1("Image 1");
-        newAuction.setImage2("Image 2");
-        newAuction.setImage3("Image 3");
-        newAuction.setPriceBase(1550.00);
-        newAuction.setName("Computer");
-        newAuction.setPrice(1550.00);
-        newAuction.setCustomer(null);
-        newAuction.setVideo("Video");
+        auction.setActive(true);
+        auction.setAuctionProduct(new AuctionProduct());
+        auction.setCreatedAt(new Date());
+        auction.setCustomer(null);
+        auction.setFinishedAt(new Date());
+        auction.setPrice(10L);
+        auction.setId(2L);
 
         ArrayList<Auction> auctions = new ArrayList<Auction>();
         auctions.add(auction);
@@ -108,8 +111,8 @@ public class ProductAuctionServiceTest {
     }
 
     @Test
-    @DisplayName("When Find By Id Return Auction, Valid Id, Name, Caracteristic And Price")
-    void WhenFindByIdReturnAuctionValidIdNameCaracteristicAndPrice() {
+    @DisplayName("When Find By Id Return Auction")
+    void WhenFindByIdReturnAuction() {
         // Arrange
         when(auctionRepository.getAuctionById(1L)).thenReturn(Optional.of(auction));
 
@@ -118,9 +121,7 @@ public class ProductAuctionServiceTest {
 
         // Assert
         assertEquals(1L, response.getId());
-        assertEquals("Computer", response.getName());
-        assertEquals("It's a black computer", response.getCaracteristic());
-        assertEquals(1550.0, response.getPrice());
+        assertEquals(1550L, response.getPrice());
     }
 
     @Test
@@ -145,52 +146,33 @@ public class ProductAuctionServiceTest {
     void WhenCreateAuctionIsSuccessful() {
         // Arrange
         AuctionRequest request = new AuctionRequest();
-        request.setAvaible(true);
-        request.setCaracteristic("It's a black computer");
-        request.setCustomerId(1L);
-        request.setCategoryId(1L);
-        request.setImage1("Image 1");
-        request.setImage2("Image 2");
-        request.setImage3("Image 3");
-        request.setPrice(1550.00);
-        request.setName("Computer");
-        request.setPrice(1550.00);
-        request.setVideo("Video");
-        request.setLastDate(new Date());
+        request.setActive(true);
+        request.setAuctionProductId(1L);
+        request.setFinishedAt(new Date());
 
+        when(auctionProductRepository.getAuctionProductById(1L)).thenReturn(Optional.of(auctionProduct));
         when(auctionRepository.save(Mockito.any())).thenReturn(auction);
-        when(categoryRepository.getCategoryById(1L)).thenReturn(Optional.of(category));
 
         // Act
         AuctionResponse response = auctionServiceImpl.create(request);
-
         // Assert
         assertNotNull(response);
     }
 
     @Test
-    @DisplayName("When Create Auction But Not Exist Category")
-    void WhenCreateAuctionButNotExistCategory() {
+    @DisplayName("When Create Auction But Auction Product Not Found")
+    void WhenCreateAuctionButAuctionProductNotFound() {
         // Arrange
         AuctionRequest request = new AuctionRequest();
-        request.setAvaible(true);
-        request.setCaracteristic("It's a black computer");
-        request.setCustomerId(1L);
-        request.setCategoryId(1L);
-        request.setImage1("Image 1");
-        request.setImage2("Image 2");
-        request.setImage3("Image 3");
-        request.setPrice(1550.00);
-        request.setName("Computer");
-        request.setPrice(1550.00);
-        request.setVideo("Video");
-        request.setLastDate(new Date());
+        request.setActive(true);
+        request.setAuctionProductId(1L);
+        request.setFinishedAt(new Date());
 
+        when(auctionProductRepository.getAuctionProductById(1L)).thenReturn(Optional.empty());
         when(auctionRepository.save(Mockito.any())).thenReturn(auction);
-        when(categoryRepository.getCategoryById(1L)).thenReturn(Optional.empty());
 
         // Act
-        String message = "Category not found";
+        String message = "Auction product not found";
         Throwable exception = catchThrowable(() -> {
             auctionServiceImpl.create(request);
         });
@@ -204,22 +186,12 @@ public class ProductAuctionServiceTest {
     void WhenCreateAuctionButErrorOcurredWhileCreating() {
         // Arrange
         AuctionRequest request = new AuctionRequest();
-        request.setAvaible(true);
-        request.setCaracteristic("It's a black computer");
-        request.setCustomerId(1L);
-        request.setCategoryId(1L);
-        request.setImage1("Image 1");
-        request.setImage2("Image 2");
-        request.setImage3("Image 3");
-        request.setPrice(1550.00);
-        request.setName("Computer");
-        request.setPrice(1550.00);
-        request.setVideo("Video");
-        request.setLastDate(new Date());
+        request.setActive(true);
+        request.setAuctionProductId(1L);
+        request.setFinishedAt(new Date());
 
+        when(auctionProductRepository.getAuctionProductById(1L)).thenReturn(Optional.of(auctionProduct));
         when(auctionRepository.save(Mockito.any())).thenReturn(ResourceNotFoundExceptionRequest.class);
-        when(categoryRepository.getCategoryById(1L)).thenReturn(Optional.of(category));
-
         // Act
         String message = "Error ocurred while creating auction";
         Throwable exception = catchThrowable(() -> {
@@ -235,21 +207,12 @@ public class ProductAuctionServiceTest {
     void WhenUpdateAuctionIsSuccessful() {
         // Arrange
         AuctionRequest request = new AuctionRequest();
-        request.setAvaible(true);
-        request.setCaracteristic("It's a black computer");
-        request.setCustomerId(1L);
-        request.setCategoryId(1L);
-        request.setImage1("Image 1");
-        request.setImage2("Image 2");
-        request.setImage3("Image 3");
-        request.setPrice(1550.00);
-        request.setName("Computer");
-        request.setPrice(1550.00);
-        request.setVideo("Video");
-        request.setLastDate(new Date());
+        request.setActive(true);
+        request.setAuctionProductId(1L);
+        request.setFinishedAt(new Date());
 
+        when(auctionProductRepository.getAuctionProductById(1L)).thenReturn(Optional.of(auctionProduct));
         when(auctionRepository.save(Mockito.any())).thenReturn(auction);
-        when(categoryRepository.getCategoryById(1L)).thenReturn(Optional.of(category));
         when(auctionRepository.getAuctionById(1L)).thenReturn(Optional.of(auction));
         // Act
         AuctionResponse response = auctionServiceImpl.update(request, 1L);
@@ -263,55 +226,15 @@ public class ProductAuctionServiceTest {
     void WhenUpdateAuctionButNotExistAuction() {
         // Arrange
         AuctionRequest request = new AuctionRequest();
-        request.setAvaible(true);
-        request.setCaracteristic("It's a black computer");
-        request.setCustomerId(1L);
-        request.setCategoryId(1L);
-        request.setImage1("Image 1");
-        request.setImage2("Image 2");
-        request.setImage3("Image 3");
-        request.setPrice(1550.00);
-        request.setName("Computer");
-        request.setPrice(1550.00);
-        request.setVideo("Video");
-        request.setLastDate(new Date());
+        request.setActive(true);
+        request.setAuctionProductId(1L);
+        request.setFinishedAt(new Date());
 
+        when(auctionProductRepository.getAuctionProductById(1L)).thenReturn(Optional.of(auctionProduct));
         when(auctionRepository.save(Mockito.any())).thenReturn(auction);
-        when(categoryRepository.getCategoryById(1L)).thenReturn(Optional.of(category));
         when(auctionRepository.getAuctionById(1L)).thenReturn(Optional.empty());
         // Act
         String message = "Auction not found";
-        Throwable exception = catchThrowable(() -> {
-            auctionServiceImpl.update(request, 1L);
-        });
-
-        // Assert
-        assertThat(exception).isInstanceOf(ResourceNotFoundExceptionRequest.class).hasMessage(message);
-    }
-
-    @Test
-    @DisplayName("When Update Auction But Not Exist Category")
-    void WhenUpdateAuctionButNotExistCategory() {
-        // Arrange
-        AuctionRequest request = new AuctionRequest();
-        request.setAvaible(true);
-        request.setCaracteristic("It's a black computer");
-        request.setCustomerId(1L);
-        request.setCategoryId(1L);
-        request.setImage1("Image 1");
-        request.setImage2("Image 2");
-        request.setImage3("Image 3");
-        request.setPrice(1550.00);
-        request.setName("Computer");
-        request.setPrice(1550.00);
-        request.setVideo("Video");
-        request.setLastDate(new Date());
-
-        when(auctionRepository.save(Mockito.any())).thenReturn(auction);
-        when(categoryRepository.getCategoryById(1L)).thenReturn(Optional.empty());
-        when(auctionRepository.getAuctionById(1L)).thenReturn(Optional.of(auction));
-        // Act
-        String message = "Category not found";
         Throwable exception = catchThrowable(() -> {
             auctionServiceImpl.update(request, 1L);
         });
@@ -325,21 +248,12 @@ public class ProductAuctionServiceTest {
     void WhenUpdateAuctionButErrorOcurredWhileUpdating() {
         // Arrange
         AuctionRequest request = new AuctionRequest();
-        request.setAvaible(true);
-        request.setCaracteristic("It's a black computer");
-        request.setCustomerId(1L);
-        request.setCategoryId(1L);
-        request.setImage1("Image 1");
-        request.setImage2("Image 2");
-        request.setImage3("Image 3");
-        request.setPrice(1550.00);
-        request.setName("Computer");
-        request.setPrice(1550.00);
-        request.setVideo("Video");
-        request.setLastDate(new Date());
+        request.setActive(true);
+        request.setAuctionProductId(1L);
+        request.setFinishedAt(new Date());
 
+        when(auctionProductRepository.getAuctionProductById(1L)).thenReturn(Optional.of(auctionProduct));
         when(auctionRepository.save(Mockito.any())).thenReturn(ResourceNotFoundExceptionRequest.class);
-        when(categoryRepository.getCategoryById(1L)).thenReturn(Optional.of(category));
         when(auctionRepository.getAuctionById(1L)).thenReturn(Optional.of(auction));
         // Act
         String message = "Error ocurred while updating auction";

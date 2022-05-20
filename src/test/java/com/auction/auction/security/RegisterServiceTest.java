@@ -62,7 +62,7 @@ public class RegisterServiceTest {
         customer.setName("name");
         customer.setPassword("password");
         customer.setUsername("username");
-        customer.setWallet(15.50);
+        customer.setWallet(15L);
 
         employee = new Employee();
         employee.setCode("code");

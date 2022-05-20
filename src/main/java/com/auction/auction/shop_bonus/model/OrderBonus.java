@@ -36,7 +36,7 @@ public class OrderBonus {
     private Long id;
 
     @Column(name = "date")
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "dd/MM/yyyy hh:ss")
     private Date date;
 
     @ManyToOne(fetch = FetchType.LAZY)
